@@ -89,7 +89,7 @@ jobs:
 
           # --- Параметри листа ---
           subject: "Зміни в розкладі ПНУ!"
-          to: user@example.com # ВАША ЕЛЕКТРОННА АДРЕСА для отримання сповіщень
+          to: clainygameryt@gmail.com # ВАША ЕЛЕКТРОННА АДРЕСА для отримання сповіщень
           from: GitHub Actions Bot <${{ secrets.MAIL_USERNAME }}> # Ім'я та адреса відправника
           body: |
             Виявлено зміни в розкладі ПНУ!
