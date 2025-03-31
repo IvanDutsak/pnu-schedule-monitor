@@ -9,22 +9,26 @@ on:
 
   schedule: # Запускати за розкладом
     # Запускає кожні 3 години (00:00, 03:00, 06:00, 09:00, 12:00, 15:00, 18:00, 21:00 UTC)
-    - cron: '0 */3 * * *'  # Важливо: дефіс і відступ
+    - cron: '0 */3 * * *'  
     # Додатково запускає щодня о 13:05 UTC (для 16:05 за Київським літнім часом UTC+3)
-    - cron: '05 13 * * *' # Важливо: дефіс і відступ
-    - cron: '27 13 * * *' # Важливо: дефіс і відступ
+    - cron: '05 13 * * *' 
+    # Додатково запускає щодня о 13:27 UTC (для 16:27 за Київським літнім часом UTC+3)
+    - cron: '27 13 * * *' 
+    # Додатково запускає щодня о 13:32 UTC (для 16:32 за Київським літнім часом UTC+3)
     - cron: '32 13 * * *'
-    - cron: '37 13 * * *' # <-- ДОДАНО ЦЕЙ РЯДОК
+    # Додатково запускає щодня о 13:37 UTC (для 16:37 за Київським літнім часом UTC+3)
+    - cron: '37 13 * * *' 
+    # Додатково запускає щодня о 13:50 UTC (для 16:50 за Київським літнім часом UTC+3)
+    - cron: '50 13 * * *' 
+    # Додатково запускає щодня о 13:57 UTC (для 16:57 за Київським літнім часом UTC+3)
+    - cron: '57 13 * * *' # <-- ДОДАНО ЧАС 16:57
 
 jobs:
   scrape-and-notify:
     runs-on: ubuntu-latest # Використовуємо останню версію Ubuntu
 
-
-    # --- ДОДАЙТЕ ЦЕЙ БЛОК ---
     permissions:
       contents: write # Надає дозвіл на запис у репозиторій (для коміту)
-    # ----------------------
 
     steps:
       - name: Checkout repository # Крок 1: Завантажуємо код репозиторію
@@ -67,7 +71,6 @@ jobs:
         run: |
           echo "Extracting change summary..."
           # Витягуємо рядки, що описують зміни (після заголовка і починаються з " - ")
-          # Ви можете налаштувати цей sed/grep, якщо формат виводу скрипта інший
           SUMMARY=$(sed -n '/Знайдено зміни в розкладах:/,$p' run_output.log | sed '1d' | grep '^\s*-\ ' | sed 's/^- //')
           # Обмежуємо довжину повідомлення, щоб уникнути проблем з емейлом
           SUMMARY=$(echo "$SUMMARY" | head -c 1000) 
@@ -77,6 +80,14 @@ jobs:
           echo "EOF" >> $GITHUB_ENV
           echo "Change summary extracted."
           cat run_output.log # Виводимо повний лог для діагностики в GitHub Actions
+
+      # --- КРОК ДЛЯ ВИПРАВЛЕННЯ ПОМИЛКИ PUSH ---
+      - name: Pull latest changes before auto-commit
+        run: |
+          git config --global user.name 'GitHub Actions Bot'
+          git config --global user.email 'actions@github.com'
+          git pull --rebase # Оновлюємо локальну копію перед комітом
+      # --------------------------------------
 
       - name: Commit and push changes # Крок 6: Комітимо оновлений schedules_data.js (якщо він змінився)
         if: steps.run_script.outputs.changes_detected == 'true' # Комітимо, тільки якщо скрипт *повідомив* про зміни
@@ -93,19 +104,18 @@ jobs:
         uses: dawidd6/action-send-mail@v3
         with:
           # --- Налаштування SMTP сервера ---
-          # Потрібно налаштувати секрети в репозиторії
-          server_address: smtp.gmail.com # Або ваш SMTP сервер (напр., smtp.ukr.net)
-          server_port: 465 # Або інший порт (587 для TLS, 465 для SSL)
-          secure: true # true для SSL (порт 465), false або не вказувати для TLS (порт 587)
+          server_address: smtp.gmail.com 
+          server_port: 465 
+          secure: true 
 
           # --- Облікові дані (з секретів GitHub) ---
-          username: ${{ secrets.MAIL_USERNAME }} # Секрет з вашим логіном пошти
-          password: ${{ secrets.MAIL_PASSWORD }} # Секрет з вашим паролем пошти (або паролем додатка)
+          username: ${{ secrets.MAIL_USERNAME }} 
+          password: ${{ secrets.MAIL_PASSWORD }} 
 
           # --- Параметри листа ---
           subject: "Зміни в розкладі ПНУ!"
           to: clainygameryt@gmail.com # ВАША ЕЛЕКТРОННА АДРЕСА для отримання сповіщень
-          from: GitHub Actions Bot <${{ secrets.MAIL_USERNAME }}> # Ім'я та адреса відправника
+          from: GitHub Actions Bot <${{ secrets.MAIL_USERNAME }}> 
           body: |
             Виявлено зміни в розкладі ПНУ!
             
