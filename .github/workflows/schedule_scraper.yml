@@ -8,19 +8,13 @@ on:
       - main # Важливо: дефіс і відступ для елемента списку
 
   schedule: # Запускати за розкладом
-    # Запускає кожні 3 години (00:00, 03:00, 06:00, 09:00, 12:00, 15:00, 18:00, 21:00 UTC)
+    # Розклади залишаються як були...
     - cron: '0 */3 * * *'  
-    # Додатково запускає щодня о 13:05 UTC (для 16:05 за Київським літнім часом UTC+3)
     - cron: '05 13 * * *' 
-    # Додатково запускає щодня о 13:27 UTC (для 16:27 за Київським літнім часом UTC+3)
     - cron: '27 13 * * *' 
-    # Додатково запускає щодня о 13:32 UTC (для 16:32 за Київським літнім часом UTC+3)
     - cron: '32 13 * * *'
-    # Додатково запускає щодня о 13:37 UTC (для 16:37 за Київським літнім часом UTC+3)
     - cron: '37 13 * * *' 
-    # Додатково запускає щодня о 13:50 UTC (для 16:50 за Київським літнім часом UTC+3)
     - cron: '50 13 * * *' 
-    # Додатково запускає щодня о 13:57 UTC (для 16:57 за Київським літнім часом UTC+3)
     - cron: '57 13 * * *' 
 
 jobs:
@@ -35,19 +29,21 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Set up Python # Крок 2: Встановлюємо Python
+        # ... (без змін) ...
         uses: actions/setup-python@v5
         with:
-          python-version: '3.10' # Ви можете вказати потрібну версію Python
+          python-version: '3.10'
 
       - name: Install dependencies # Крок 3: Встановлюємо потрібні бібліотеки
+        # ... (без змін) ...
         run: |
           python -m pip install --upgrade pip
           pip install -r requirements.txt
-          # Додаткові залежності для headless Chrome на Ubuntu
           sudo apt-get update
           sudo apt-get install -y google-chrome-stable 
 
       - name: Run scraper script and capture output # Крок 4: Запускаємо ваш головний скрипт
+        # ... (без змін) ...
         id: run_script
         run: |
           echo "Running main-scraper.py..."
@@ -64,6 +60,7 @@ jobs:
           fi
 
       - name: Extract change summary # Крок 5: Витягуємо опис змін для емейлу (якщо вони є)
+        # ... (без змін) ...
         id: extract_summary
         if: env.CHANGES_FOUND == 'true' 
         run: |
@@ -76,19 +73,35 @@ jobs:
           echo "Change summary extracted."
           cat run_output.log
 
-      # --- ОНОВЛЕНИЙ КРОК ДЛЯ ВИПРАВЛЕННЯ ПОМИЛКИ PULL ---
+      # --- ОНОВЛЕНИЙ КРОК ДЛЯ ВИПРАВЛЕННЯ ПОМИЛКИ PULL (з використанням stash) ---
       - name: Pull latest changes before auto-commit
+        # Виконуємо цей крок, тільки якщо скрипт виявив зміни, бо лише тоді є що ховати (stash)
+        if: steps.run_script.outputs.changes_detected == 'true' 
         run: |
           git config --global user.name 'GitHub Actions Bot'
           git config --global user.email 'actions@github.com'
+          echo "Checking for local changes..."
+          # Перевіряємо, чи є взагалі зміни для stash
+          if ! git diff --quiet; then
+            echo "Stashing local changes..."
+            git stash 
+          else
+            echo "No local changes to stash."
+          fi
           echo "Pulling latest changes with rebase..."
-          # Виконуємо pull --rebase без попереднього git add
-          git pull --rebase 
-          echo "Pull finished."
-      # --------------------------------------------
+          # Виконуємо pull --rebase на (сподіваємось) чистому стані
+          # Додаємо прапор --autostash, можливо, він допоможе
+          git pull --rebase --autostash 
+          echo "Applying stashed changes (if any)..."
+          # Намагаємося повернути зміни зі сховища (якщо вони там були)
+          # Використовуємо 'stash apply', щоб запис у stash залишився для можливої діагностики
+          # || true - щоб крок не падав, якщо stash порожній
+          git stash apply || true 
+          echo "Pull and stash apply finished."
+      # ----------------------------------------------------------------
 
       - name: Commit and push changes # Крок 6: Комітимо оновлений schedules_data.js (якщо він змінився)
-        # Умова if тут важлива, бо крок git pull міг скасувати зміни, якщо були конфлікти (хоч і малоймовірно)
+        # ... (без змін) ...
         if: steps.run_script.outputs.changes_detected == 'true' 
         uses: stefanzweifel/git-auto-commit-action@v5
         with:
@@ -99,19 +112,15 @@ jobs:
           commit_author: GitHub Actions Bot <actions@github.com>
 
       - name: Send notification email # Крок 7: Відправляємо емейл (якщо зміни знайдено)
+        # ... (без змін) ...
         if: env.CHANGES_FOUND == 'true' 
         uses: dawidd6/action-send-mail@v3
         with:
-          # --- Налаштування SMTP сервера ---
           server_address: smtp.gmail.com 
           server_port: 465 
           secure: true 
-
-          # --- Облікові дані (з секретів GitHub) ---
           username: ${{ secrets.MAIL_USERNAME }} 
           password: ${{ secrets.MAIL_PASSWORD }} 
-
-          # --- Параметри листа ---
           subject: "Зміни в розкладі ПНУ!"
           to: clainygameryt@gmail.com 
           from: GitHub Actions Bot <${{ secrets.MAIL_USERNAME }}> 
