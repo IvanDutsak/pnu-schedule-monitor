@@ -12,6 +12,12 @@ jobs:
   scrape-and-notify:
     runs-on: ubuntu-latest # Використовуємо останню версію Ubuntu
 
+
+    # --- ДОДАЙТЕ ЦЕЙ БЛОК ---
+    permissions:
+      contents: write # Надає дозвіл на запис у репозиторій (для коміту)
+    # ----------------------
+
     steps:
       - name: Checkout repository # Крок 1: Завантажуємо код репозиторію
         uses: actions/checkout@v4
