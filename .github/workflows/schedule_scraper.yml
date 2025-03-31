@@ -21,7 +21,7 @@ on:
     # Додатково запускає щодня о 13:50 UTC (для 16:50 за Київським літнім часом UTC+3)
     - cron: '50 13 * * *' 
     # Додатково запускає щодня о 13:57 UTC (для 16:57 за Київським літнім часом UTC+3)
-    - cron: '57 13 * * *' # <-- ДОДАНО ЧАС 16:57
+    - cron: '57 13 * * *' 
 
 jobs:
   scrape-and-notify:
@@ -81,12 +81,20 @@ jobs:
           echo "Change summary extracted."
           cat run_output.log # Виводимо повний лог для діагностики в GitHub Actions
 
-      # --- КРОК ДЛЯ ВИПРАВЛЕННЯ ПОМИЛКИ PUSH ---
-      - name: Pull latest changes before auto-commit
+      # --- КРОК ДЛЯ ВИПРАВЛЕННЯ ПОМИЛКИ PULL ---
+      - name: Prepare for commit and pull latest changes
+        # Виконуємо цей крок, тільки якщо скрипт виявив зміни
+        if: steps.run_script.outputs.changes_detected == 'true' 
         run: |
           git config --global user.name 'GitHub Actions Bot'
           git config --global user.email 'actions@github.com'
-          git pull --rebase # Оновлюємо локальну копію перед комітом
+          echo "Staging changed file: schedules_data.js"
+          # Додаємо змінений файл до індексу, щоб git pull --rebase не скаржився
+          git add schedules_data.js 
+          echo "Pulling latest changes with rebase..."
+          # Виконуємо pull --rebase
+          git pull --rebase 
+          echo "Pull finished."
       # --------------------------------------
 
       - name: Commit and push changes # Крок 6: Комітимо оновлений schedules_data.js (якщо він змінився)
