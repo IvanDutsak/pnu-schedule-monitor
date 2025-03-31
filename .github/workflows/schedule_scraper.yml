@@ -51,64 +51,55 @@ jobs:
         id: run_script
         run: |
           echo "Running main-scraper.py..."
-          # Запускаємо скрипт і зберігаємо весь вивід у файл логу
           python main-scraper.py | tee run_output.log 
           echo "Script finished."
-          # Перевіряємо, чи скрипт виявив зміни
           if grep -q "Знайдено зміни в розкладах:" run_output.log; then
             echo "CHANGES_FOUND=true" >> $GITHUB_ENV
-            echo "::set-output name=changes_detected::true" # Встановлюємо вихідний параметр
+            echo "::set-output name=changes_detected::true"
             echo "Changes detected by script."
           else
             echo "CHANGES_FOUND=false" >> $GITHUB_ENV
-            echo "::set-output name=changes_detected::false" # Встановлюємо вихідний параметр
+            echo "::set-output name=changes_detected::false"
             echo "No changes detected by script."
           fi
 
       - name: Extract change summary # Крок 5: Витягуємо опис змін для емейлу (якщо вони є)
         id: extract_summary
-        if: env.CHANGES_FOUND == 'true' # Виконуємо тільки якщо зміни знайдено
+        if: env.CHANGES_FOUND == 'true' 
         run: |
           echo "Extracting change summary..."
-          # Витягуємо рядки, що описують зміни (після заголовка і починаються з " - ")
           SUMMARY=$(sed -n '/Знайдено зміни в розкладах:/,$p' run_output.log | sed '1d' | grep '^\s*-\ ' | sed 's/^- //')
-          # Обмежуємо довжину повідомлення, щоб уникнути проблем з емейлом
           SUMMARY=$(echo "$SUMMARY" | head -c 1000) 
-          # Записуємо у змінну середовища для використання в наступному кроці
           echo "CHANGES_SUMMARY<<EOF" >> $GITHUB_ENV
           echo "$SUMMARY" >> $GITHUB_ENV
           echo "EOF" >> $GITHUB_ENV
           echo "Change summary extracted."
-          cat run_output.log # Виводимо повний лог для діагностики в GitHub Actions
+          cat run_output.log
 
-      # --- КРОК ДЛЯ ВИПРАВЛЕННЯ ПОМИЛКИ PULL ---
-      - name: Prepare for commit and pull latest changes
-        # Виконуємо цей крок, тільки якщо скрипт виявив зміни
-        if: steps.run_script.outputs.changes_detected == 'true' 
+      # --- ОНОВЛЕНИЙ КРОК ДЛЯ ВИПРАВЛЕННЯ ПОМИЛКИ PULL ---
+      - name: Pull latest changes before auto-commit
         run: |
           git config --global user.name 'GitHub Actions Bot'
           git config --global user.email 'actions@github.com'
-          echo "Staging changed file: schedules_data.js"
-          # Додаємо змінений файл до індексу, щоб git pull --rebase не скаржився
-          git add schedules_data.js 
           echo "Pulling latest changes with rebase..."
-          # Виконуємо pull --rebase
+          # Виконуємо pull --rebase без попереднього git add
           git pull --rebase 
           echo "Pull finished."
-      # --------------------------------------
+      # --------------------------------------------
 
       - name: Commit and push changes # Крок 6: Комітимо оновлений schedules_data.js (якщо він змінився)
-        if: steps.run_script.outputs.changes_detected == 'true' # Комітимо, тільки якщо скрипт *повідомив* про зміни
+        # Умова if тут важлива, бо крок git pull міг скасувати зміни, якщо були конфлікти (хоч і малоймовірно)
+        if: steps.run_script.outputs.changes_detected == 'true' 
         uses: stefanzweifel/git-auto-commit-action@v5
         with:
           commit_message: "Автоматичне оновлення розкладу"
-          file_pattern: schedules_data.js # Вказуємо, який файл відстежувати для коміту
-          commit_user_name: GitHub Actions Bot # Ім'я користувача для коміту
-          commit_user_email: actions@github.com # Email для коміту
+          file_pattern: schedules_data.js 
+          commit_user_name: GitHub Actions Bot 
+          commit_user_email: actions@github.com 
           commit_author: GitHub Actions Bot <actions@github.com>
 
       - name: Send notification email # Крок 7: Відправляємо емейл (якщо зміни знайдено)
-        if: env.CHANGES_FOUND == 'true' # Виконуємо тільки якщо зміни знайдено
+        if: env.CHANGES_FOUND == 'true' 
         uses: dawidd6/action-send-mail@v3
         with:
           # --- Налаштування SMTP сервера ---
@@ -122,7 +113,7 @@ jobs:
 
           # --- Параметри листа ---
           subject: "Зміни в розкладі ПНУ!"
-          to: clainygameryt@gmail.com # ВАША ЕЛЕКТРОННА АДРЕСА для отримання сповіщень
+          to: clainygameryt@gmail.com 
           from: GitHub Actions Bot <${{ secrets.MAIL_USERNAME }}> 
           body: |
             Виявлено зміни в розкладі ПНУ!
