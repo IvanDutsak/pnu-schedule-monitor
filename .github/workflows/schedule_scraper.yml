@@ -1,0 +1,102 @@
+name: Check PNU Schedule Changes # Назва вашого workflow
+
+on:
+  workflow_dispatch: # Дозволяє запускати вручну з інтерфейсу GitHub Actions
+  schedule:
+    # Запускає кожні 3 години (00:00, 03:00, 06:00 UTC і т.д.)
+    # Ви можете змінити час. Детальніше про cron: https://crontab.guru/
+    - cron: '0 */3 * * *' 
+
+jobs:
+  scrape-and-notify:
+    runs-on: ubuntu-latest # Використовуємо останню версію Ubuntu
+
+    steps:
+      - name: Checkout repository # Крок 1: Завантажуємо код репозиторію
+        uses: actions/checkout@v4
+
+      - name: Set up Python # Крок 2: Встановлюємо Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.10' # Ви можете вказати потрібну версію Python
+
+      - name: Install dependencies # Крок 3: Встановлюємо потрібні бібліотеки
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+          # Додаткові залежності для headless Chrome на Ubuntu
+          sudo apt-get update
+          sudo apt-get install -y google-chrome-stable 
+
+      - name: Run scraper script and capture output # Крок 4: Запускаємо ваш головний скрипт
+        id: run_script
+        run: |
+          echo "Running main-scraper.py..."
+          # Запускаємо скрипт і зберігаємо весь вивід у файл логу
+          python main-scraper.py | tee run_output.log 
+          echo "Script finished."
+          # Перевіряємо, чи скрипт виявив зміни
+          if grep -q "Знайдено зміни в розкладах:" run_output.log; then
+            echo "CHANGES_FOUND=true" >> $GITHUB_ENV
+            echo "::set-output name=changes_detected::true" # Встановлюємо вихідний параметр
+            echo "Changes detected by script."
+          else
+            echo "CHANGES_FOUND=false" >> $GITHUB_ENV
+            echo "::set-output name=changes_detected::false" # Встановлюємо вихідний параметр
+            echo "No changes detected by script."
+          fi
+
+      - name: Extract change summary # Крок 5: Витягуємо опис змін для емейлу (якщо вони є)
+        id: extract_summary
+        if: env.CHANGES_FOUND == 'true' # Виконуємо тільки якщо зміни знайдено
+        run: |
+          echo "Extracting change summary..."
+          # Витягуємо рядки, що описують зміни (після заголовка і починаються з " - ")
+          # Ви можете налаштувати цей sed/grep, якщо формат виводу скрипта інший
+          SUMMARY=$(sed -n '/Знайдено зміни в розкладах:/,$p' run_output.log | sed '1d' | grep '^\s*-\ ' | sed 's/^- //')
+          # Обмежуємо довжину повідомлення, щоб уникнути проблем з емейлом
+          SUMMARY=$(echo "$SUMMARY" | head -c 1000) 
+          # Записуємо у змінну середовища для використання в наступному кроці
+          echo "CHANGES_SUMMARY<<EOF" >> $GITHUB_ENV
+          echo "$SUMMARY" >> $GITHUB_ENV
+          echo "EOF" >> $GITHUB_ENV
+          echo "Change summary extracted."
+          cat run_output.log # Виводимо повний лог для діагностики в GitHub Actions
+
+      - name: Commit and push changes # Крок 6: Комітимо оновлений schedules_data.js (якщо він змінився)
+        if: steps.run_script.outputs.changes_detected == 'true' # Комітимо, тільки якщо скрипт *повідомив* про зміни
+        uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          commit_message: "Автоматичне оновлення розкладу"
+          file_pattern: schedules_data.js # Вказуємо, який файл відстежувати для коміту
+          commit_user_name: GitHub Actions Bot # Ім'я користувача для коміту
+          commit_user_email: actions@github.com # Email для коміту
+          commit_author: GitHub Actions Bot <actions@github.com>
+
+      - name: Send notification email # Крок 7: Відправляємо емейл (якщо зміни знайдено)
+        if: env.CHANGES_FOUND == 'true' # Виконуємо тільки якщо зміни знайдено
+        uses: dawidd6/action-send-mail@v3
+        with:
+          # --- Налаштування SMTP сервера ---
+          # Потрібно налаштувати секрети в репозиторії
+          server_address: smtp.gmail.com # Або ваш SMTP сервер (напр., smtp.ukr.net)
+          server_port: 465 # Або інший порт (587 для TLS, 465 для SSL)
+          secure: true # true для SSL (порт 465), false або не вказувати для TLS (порт 587)
+
+          # --- Облікові дані (з секретів GitHub) ---
+          username: ${{ secrets.MAIL_USERNAME }} # Секрет з вашим логіном пошти
+          password: ${{ secrets.MAIL_PASSWORD }} # Секрет з вашим паролем пошти (або паролем додатка)
+
+          # --- Параметри листа ---
+          subject: "Зміни в розкладі ПНУ!"
+          to: user@example.com # ВАША ЕЛЕКТРОННА АДРЕСА для отримання сповіщень
+          from: GitHub Actions Bot <${{ secrets.MAIL_USERNAME }}> # Ім'я та адреса відправника
+          body: |
+            Виявлено зміни в розкладі ПНУ!
+            
+            Зміни:
+            ${{ env.CHANGES_SUMMARY }}
+
+            Перегляньте деталі в репозиторії або на сайті ПНУ.
+            Повний лог запуску доступний в GitHub Actions.
+          priority: high
