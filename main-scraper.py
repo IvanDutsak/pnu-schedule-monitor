@@ -20,7 +20,7 @@ GROUPS = [
 ]
 START_DATE = "10.02.2025"
 END_DATE = "31.06.2025"
-OUTPUT_JS_FILE = "schedules_data.js"
+OUTPUT_JS_FILE = "schedule_data.js"
 WAIT_TIMEOUT = 15
 SLEEP_BETWEEN_REQUESTS = 1
 
