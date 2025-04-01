@@ -109,14 +109,14 @@ jobs:
           path: repo-b # <-- Клонуємо в окрему папку 'repo-b'
           token: ${{ secrets.REPO_B_PAT }} # <-- Секрет з твоїм Personal Access Token
 
-      - name: Copy schedules_data.js to repo-b
+      - name: Copy schedule_data.js to repo-b
         # Виконуємо цей крок, тільки якщо скрипт виявив зміни
         if: steps.run_script.outputs.changes_detected == 'true'
         run: |
-          echo "Copying schedules_data.js from workspace root to repo-b folder..."
-          # schedules_data.js знаходиться в корені робочої області від першого checkout
+          echo "Copying schedule_data.js from workspace root to repo-b folder..."
+          # schedule_data.js знаходиться в корені робочої області від першого checkout
           # Копіюємо його в корінь репозиторію student-pnu-web.github.io (який тепер у папці repo-b)
-          cp ./schedules_data.js ./repo-b/schedules_data.js
+          cp ./schedule_data.js ./repo-b/schedule_data.js
           echo "Copy complete."
         # Додаємо shell: bash
         shell: bash
@@ -128,17 +128,17 @@ jobs:
           cd repo-b # Переходимо в директорію другого репозиторію
           git config user.name 'GitHub Actions Bot' # Ім'я для коміту
           git config user.email 'actions@github.com' # Email для коміту
-          echo "Adding schedules_data.js to git index in repo-b..."
-          git add schedules_data.js # Додаємо файл до індексу Git
+          echo "Adding schedule_data.js to git index in repo-b..."
+          git add schedule_data.js # Додаємо файл до індексу Git
 
           echo "Checking for actual changes to commit in repo-b..."
           # Перевіряємо, чи дійсно є зміни для коміту (порівнюємо індекс з HEAD)
           if git diff --staged --quiet; then
-            echo "No actual changes detected in schedules_data.js for student-pnu-web.github.io. Skipping commit."
+            echo "No actual changes detected in schedule_data.js for student-pnu-web.github.io. Skipping commit."
           else
             echo "Changes detected in repo-b. Committing..."
             # Створюємо коміт. Можна додати [skip ci] якщо не хочеш запускати Actions у другому репо від цього коміту
-            git commit -m "Автоматичне оновлення schedules_data.js [skip ci]"
+            git commit -m "Автоматичне оновлення schedule_data.js [skip ci]"
             echo "Pushing changes to student-pnu-web.github.io..."
             # Робимо push у гілку main (або зміни на свою основну гілку, якщо вона інша)
             git push origin main
