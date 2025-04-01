@@ -49,8 +49,8 @@ jobs:
           python main-scraper.py | tee run_output.log
           echo "Script finished."
           # Перевірка, чи згенерувався файл schedules_data.js
-          if [ ! -f schedules_data.js ]; then
-             echo "::error file=main-scraper.py::File schedules_data.js was not generated!"
+          if [ ! -f schedule_data.js ]; then
+             echo "::error file=main-scraper.py::File schedule_data.js was not generated!"
              exit 1
           fi
           if grep -q "Знайдено зміни в розкладах:" run_output.log; then
