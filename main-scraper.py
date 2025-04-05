@@ -13,9 +13,8 @@ from scraper import parse_schedule_html_to_json
 # --- Налаштування ---
 URL = "https://asu-srv.pnu.edu.ua/cgi-bin/timetable.cgi"
 GROUPS = [
-    "КН-11", "КН-12", "КН-21", "КН-22", "КН-23", "КН-31", "КН-32", "КН-41",
-    "ІСТ-11", "ІСТ-21",
-    "ПР-31", "ПР-32", "ПР-33", "ПР-34", "ПР-35"
+    "КН-31", "КН-32",
+    "ПР-35"
 ]
 START_DATE = "10.02.2025"
 END_DATE = "31.06.2025"
