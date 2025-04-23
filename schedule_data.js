@@ -2313,7 +2313,7 @@ const schedulesData = {
                         "teacher": "Матвієнків С.М.",
                         "group": "SS-зб4",
                         "details": "",
-                        "link": ""
+                        "link": "https://meet.google.com/uvz-phzq-qaf"
                     }
                 ]
             },
@@ -2781,7 +2781,7 @@ const schedulesData = {
                         "teacher": "Матвієнків С.М.",
                         "group": "SS-зб4",
                         "details": "",
-                        "link": ""
+                        "link": "https://meet.google.com/uvz-phzq-qaf"
                     }
                 ]
             },
@@ -3241,7 +3241,7 @@ const schedulesData = {
                         "teacher": "Матвієнків С.М.",
                         "group": "SS-зб4",
                         "details": "",
-                        "link": ""
+                        "link": "https://meet.google.com/uvz-phzq-qaf"
                     }
                 ]
             },
