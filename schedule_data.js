@@ -2490,14 +2490,6 @@ const schedulesData = {
                         "group": "КН(зб)2.21",
                         "details": "ауд. 307 кор. Центральний корпус, Шевченка 57",
                         "link": ""
-                    },
-                    {
-                        "time": "18:15-19:35",
-                        "subject": "Збірна група ІПтаРС-зб1 Інноваційне підприємництво та розвиток стартапів (Л)",
-                        "teacher": "Паска Ю.В.",
-                        "group": "ІПтаРС-зб1",
-                        "details": "",
-                        "link": "https://meet.google.com/gqw-tsfv-ntg"
                     }
                 ]
             },
@@ -2923,10 +2915,18 @@ const schedulesData = {
                     },
                     {
                         "time": "18:15-19:35",
+                        "subject": "Збірна група ІПтаРС-зб1 Інноваційне підприємництво та розвиток стартапів (Л)",
+                        "teacher": "Паска Ю.В.",
+                        "group": "ІПтаРС-зб1",
+                        "details": "дист.",
+                        "link": ""
+                    },
+                    {
+                        "time": "18:15-19:35",
                         "subject": "Збірна група ТМ-зб6 Тайм- менеджмент (ПрС)",
                         "teacher": "Колєдіна К.О.",
                         "group": "ТМ-зб6",
-                        "details": "",
+                        "details": "http://meet.google.com/emj-cmiw-...",
                         "link": ""
                     },
                     {
@@ -2935,7 +2935,7 @@ const schedulesData = {
                         "teacher": "Туровська Л.В.",
                         "group": "BE-зб5",
                         "details": "",
-                        "link": "http://meet.google.com/emj-cmiw-tqm"
+                        "link": "https://meet.google.com/gqw-tsfv-ntg"
                     },
                     {
                         "time": "19:40-21:00",
