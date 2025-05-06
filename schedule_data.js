@@ -2673,23 +2673,7 @@ const schedulesData = {
                         "teacher": "Колєдіна К.О.",
                         "group": "ТМ-зб6",
                         "details": "http://meet.google.com/emj-cmiw-...",
-                        "link": ""
-                    },
-                    {
-                        "time": "18:15-19:35",
-                        "subject": "Збірна група BE-зб5 Business English (ПрС)",
-                        "teacher": "Туровська Л.В.",
-                        "group": "BE-зб5",
-                        "details": "",
                         "link": "https://meet.google.com/gqw-tsfv-ntg"
-                    },
-                    {
-                        "time": "19:40-21:00",
-                        "subject": "Збірна група BE-зб5 Business English (ПрС)",
-                        "teacher": "Туровська Л.В.",
-                        "group": "BE-зб5",
-                        "details": "",
-                        "link": "https://meet.google.com/mka-xhtg-idk"
                     }
                 ]
             },
@@ -3145,10 +3129,18 @@ const schedulesData = {
                     },
                     {
                         "time": "18:15-19:35",
+                        "subject": "Збірна група BE-зб5 Business English (ПрС)",
+                        "teacher": "Туровська Л.В.",
+                        "group": "BE-зб5",
+                        "details": "дист.",
+                        "link": ""
+                    },
+                    {
+                        "time": "18:15-19:35",
                         "subject": "Збірна група ІПтаРС-зб1 Інноваційне підприємництво та розвиток стартапів (ПрС)",
                         "teacher": "Паска Ю.В.",
                         "group": "ІПтаРС-зб1",
-                        "details": "дист.",
+                        "details": "дист., https://meet.google.com/gqw-tsfv...",
                         "link": ""
                     },
                     {
@@ -3157,7 +3149,7 @@ const schedulesData = {
                         "teacher": "Колєдіна К.О.",
                         "group": "ТМ-зб6",
                         "details": "http://meet.google.com/emj-cmiw-...",
-                        "link": "https://meet.google.com/gqw-tsfv-ntg"
+                        "link": "https://meet.google.com/mka-xhtg-idk"
                     },
                     {
                         "time": "19:40-21:00",
@@ -3196,6 +3188,14 @@ const schedulesData = {
                         "group": "КН-31",
                         "details": "ауд. 234 кор. Центральний корпус, Шевченка 57",
                         "link": ""
+                    },
+                    {
+                        "time": "18:15-19:35",
+                        "subject": "Збірна група BE-зб5 Business English (ПрС)",
+                        "teacher": "Туровська Л.В.",
+                        "group": "BE-зб5",
+                        "details": "",
+                        "link": "https://meet.google.com/mka-xhtg-idk"
                     }
                 ]
             },
@@ -6252,22 +6252,6 @@ const schedulesData = {
                         "group": "КН(зб)2.21",
                         "details": "ауд. 313 кор. Центральний корпус, Шевченка 57",
                         "link": ""
-                    },
-                    {
-                        "time": "18:15-19:35",
-                        "subject": "Збірна група BE-зб5 Business English (ПрС)",
-                        "teacher": "Туровська Л.В.",
-                        "group": "BE-зб5",
-                        "details": "",
-                        "link": ""
-                    },
-                    {
-                        "time": "19:40-21:00",
-                        "subject": "Збірна група BE-зб5 Business English (ПрС)",
-                        "teacher": "Туровська Л.В.",
-                        "group": "BE-зб5",
-                        "details": "",
-                        "link": "https://meet.google.com/mka-xhtg-idk"
                     }
                 ]
             },
@@ -6321,7 +6305,7 @@ const schedulesData = {
                         "teacher": "Кучера І.В.",
                         "group": "Уфсо-3зб",
                         "details": "",
-                        "link": ""
+                        "link": "https://meet.google.com/khj-wrua-nrk"
                     }
                 ]
             },
@@ -6575,7 +6559,7 @@ const schedulesData = {
                         "teacher": "Кучера І.В.",
                         "group": "Уфсо-3зб",
                         "details": "",
-                        "link": ""
+                        "link": "https://meet.google.com/khj-wrua-nrk"
                     },
                     {
                         "time": "19:40-21:00",
@@ -6722,6 +6706,14 @@ const schedulesData = {
                         "link": ""
                     },
                     {
+                        "time": "18:15-19:35",
+                        "subject": "Збірна група BE-зб5 Business English (ПрС)",
+                        "teacher": "Туровська Л.В.",
+                        "group": "BE-зб5",
+                        "details": "",
+                        "link": "https://meet.google.com/mka-xhtg-idk"
+                    },
+                    {
                         "time": "19:40-21:00",
                         "subject": "Збірна група BE-зб5 Business English (ПрС)",
                         "teacher": "Туровська Л.В.",
@@ -6761,11 +6753,19 @@ const schedulesData = {
                     },
                     {
                         "time": "18:15-19:35",
+                        "subject": "Збірна група BE-зб5 Business English (ПрС)",
+                        "teacher": "Туровська Л.В.",
+                        "group": "BE-зб5",
+                        "details": "дист.",
+                        "link": ""
+                    },
+                    {
+                        "time": "18:15-19:35",
                         "subject": "Збірна група Уфсо-3зб Соціологія (ПрС)",
                         "teacher": "Кучера І.В.",
                         "group": "Уфсо-3зб",
-                        "details": "",
-                        "link": ""
+                        "details": "https://meet.google.com/khj-wrua...",
+                        "link": "https://meet.google.com/mka-xhtg-idk"
                     }
                 ]
             },
@@ -6941,7 +6941,7 @@ const schedulesData = {
                         "teacher": "Кучера І.В.",
                         "group": "Уфсо-3зб",
                         "details": "",
-                        "link": ""
+                        "link": "https://meet.google.com/khj-wrua-nrk"
                     }
                 ]
             },
