@@ -11,7 +11,7 @@ from webdriver_manager.chrome import ChromeDriverManager
 from scraper import parse_schedule_html_to_json
 
 # --- Налаштування ---
-URL = "https://asu-srv.pnu.edu.ua/cgi-bin/timetable.cgi"
+URL = "https://asu-sto.pnu.edu.ua/schedule/search-groups"
 GROUPS = [
     "КН-31", "КН-32",
     "ПР-35"
